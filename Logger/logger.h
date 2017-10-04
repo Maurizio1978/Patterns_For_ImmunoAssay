@@ -9,12 +9,16 @@
 #include <QFileDialog>
 
 #include <Templates/Singleton.h>
+#include <boost/lexical_cast.hpp>
 
 using namespace std;
 
 namespace
 {
-    int kMaxNumberOfMessagesPerFile = 3;
+    const int kMaxNumberOfMessagesPerFile = 10;
+    const int kMinValueNotToConvert = 10;
+
+    const std::string kZero = "0";
 }
 
 class Logger : public Templates::Singleton<Logger>
@@ -22,10 +26,10 @@ class Logger : public Templates::Singleton<Logger>
     friend class Templates::Singleton<Logger>;
 
 public:
-    static void Info(const std::string& strMessage)
-    {
-        Instance().operator << ("[Info] " + strMessage);
-    }
+      static void Dump(const int iLevel, const char* iMessage, const int iLine, const char* iFile)
+      {
+          Instance().Log(iLevel, iMessage, iLine, iFile);
+      }
 
 protected:
     ~Logger()
@@ -40,75 +44,67 @@ private:
 
     int _NumberOfLines;
 
-    Logger& operator << (const std::string& strMessage)
+    void Log(const int iLevel, const std::string& iMessage, int iLine, const std::string& iFile)
     {
         time_t aCurrTime;
         time(&aCurrTime);
         struct tm *aCurrTmPtr = localtime(&aCurrTime);
 
+        std::string aMonth = Format(aCurrTmPtr->tm_mon);
+        std::string aDay = Format(aCurrTmPtr->tm_mday);
+        std::string aHour = Format(aCurrTmPtr->tm_hour);
+        std::string aMin = Format(aCurrTmPtr->tm_min);
+        std::string aSec = Format(aCurrTmPtr->tm_sec);
+
         if (!_FileStream.is_open())
         {
             std::string aCurrentDirectory = QDir::currentPath().toStdString();
 
-            _FileName << aCurrentDirectory << "/log/" << (1900 + aCurrTmPtr->tm_year) << "_" <<
-                         aCurrTmPtr->tm_mon << "_" << aCurrTmPtr->tm_mday << "_" <<
-                         aCurrTmPtr->tm_hour << "_" << aCurrTmPtr->tm_min << ".log";
+            _FileName << aCurrentDirectory << "/log/" <<
+                         (1900 + aCurrTmPtr->tm_year) << "_" <<
+                         aMonth << "_" <<
+                         aDay << "_" <<
+                         aHour << "_" <<
+                         aMin << "_" <<
+                         aSec << ".log";
 
-//            aCurrentDirectory =+ "/log/";
-//            _FileName << aCurrentDirectory;
             std::string aPattern = _FileName.str();
 
-//            std::string cristo = aCurrentDirectory.append("/log/cristo.log");
-
-//            _FileName << cristo;
             _FileStream.open(aPattern.c_str(), std::ofstream::out | std::ofstream::app);
+
+            _FileName.str(std::string());
         }
 
         logger_lock.lock();
-        _FileStream << "[" << aCurrTmPtr->tm_hour << ":" << aCurrTmPtr->tm_min << ":" << aCurrTmPtr->tm_sec << "] ---> " << strMessage << std::endl;
+        _FileStream << "[" << aHour << ":" <<
+                              aMin << ":" <<
+                              aSec << "] ---> " <<
+                              iMessage << " at line:" <<
+                              iLine << " -- in file:" <<
+                              iFile << std::endl;
         logger_lock.unlock();
 
         if (++_NumberOfLines > kMaxNumberOfMessagesPerFile)
         {
+            _NumberOfLines = 0;
             _FileStream.close();
         }
-
-        return *this;
     }
 
-//    static void Info(const std::string& strFormat, const std::string& value);
-//    static void Info(const std::string& strFormat, const int& value);
-
-//    static void Error(const std::string& strMessage);
-//    static void Error(const std::string& strFormat, const std::string& value);
-//    static void Error(const std::string& strFormat, const int& value);
-
+    const std::string Format(const int iInputValue) const
+    {
+        std::string aOutputString;
+        std::string aOriginalValue = boost::lexical_cast<std::string>(iInputValue);
+        if (iInputValue < kMinValueNotToConvert)
+        {
+            aOutputString = kZero;
+            aOutputString += aOriginalValue;
+        }
+        else
+        {
+            aOutputString = aOriginalValue;
+        }
+        return aOutputString;
+    }
 };
-
-//class logger
-//{
-//public:
-//    static void Info(const string& strMessage);
-//    static void Info(const string& strFormat, const string& value);
-//    static void Info(const string& strFormat, const int& value);
-
-//    static void Error(const string& strMessage);
-//    static void Error(const string& strFormat, const string& value);
-//    static void Error(const string& strFormat, const int& value);
-
-//private:
-//    static logger& GetInstance();
-//    logger& operator << (const string& strMessage);
-
-//    logger(logger const&){}
-//    logger& operator=(logger const&){}
-
-//    logger();
-//    ~logger();
-
-//    static stringstream m_FileName;
-//    static ofstream m_FileStream;
-//    static tthread::mutex logger_lock;
-//};
-
 #endif // LOGGER_H

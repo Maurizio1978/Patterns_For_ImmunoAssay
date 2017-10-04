@@ -21,8 +21,11 @@ public:
     }
 
 protected:
-    virtual ~Singleton() {}
-    inline explicit Singleton() {}
+    inline explicit Singleton(){}
+    Singleton(Singleton const&){}
+    Singleton& operator=(Singleton const&){}
+
+    virtual ~Singleton(){}
 
 private:
     static T* _Instance;

@@ -7,18 +7,29 @@
 #include "Factory/factory.h"
 #include "Factory/mago4factory.h"
 
+#include <macros.h>
+#include <stdio.h>
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
 
-    Logger::Info("Main >>> main::Application Start");
+    try
+    {
+        log(INFO, "Application start");
 
+        boost::shared_ptr<Factory> aFactorySP(new Mago4Factory);
+        aFactorySP->createDilutionRack();
 
-    boost::shared_ptr<Factory> aFactorySP(new Mago4Factory);
-    aFactorySP->createDilutionRack();
+        log(INFO, "Application does something");
 
+        log(INFO, "Application end");
+    }
+    catch (...)
+    {
 
+    }
     return a.exec();
 }

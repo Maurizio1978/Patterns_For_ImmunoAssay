@@ -51,6 +51,10 @@ HEADERS  += mainwindow.h \
     Mago4/mago4.h \
     Mago4s/Mago4sDilutionRack/mago4sdilutionrack.h \
     Mago4s/Mago4sSampleRack/mago4ssamplerack.h \
-    Mago4s/Mago4sWellRack/mago4swellrack.h
+    Mago4s/Mago4sWellRack/mago4swellrack.h \
+    Logger/logger.h \
+    fast_mutex.h \
+    tinythread.h \
+    macros.h
 
 FORMS    += mainwindow.ui
