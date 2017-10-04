@@ -1,7 +1,7 @@
 #ifndef SINGLETON_H
 #define SINGLETON_H
 
-#include <Logger/logger.h>
+#include <Logger/Logger.h>
 
 namespace Templates
 {
@@ -11,18 +11,21 @@ class Singleton
 public:
     static T& Instance()
     {
-        logger::Info("checking instance");
+//        Logger::Info("checking instance");
         if (_Instance == 0)
         {
-            logger::Info("creating singleton instance");
+//            Logger::Info("creating singleton instance");
             _Instance = CreateInstance();
         }
         return *(_Instance);
     }
 
 protected:
-    virtual ~Singleton() {}
-    inline explicit Singleton() {}
+    inline explicit Singleton(){}
+    Singleton(Singleton const&){}
+    Singleton& operator=(Singleton const&){}
+
+    virtual ~Singleton(){}
 
 private:
     static T* _Instance;
