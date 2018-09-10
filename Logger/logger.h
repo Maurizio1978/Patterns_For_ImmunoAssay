@@ -50,7 +50,7 @@ private:
         time(&aCurrTime);
         struct tm *aCurrTmPtr = localtime(&aCurrTime);
 
-        std::string aMonth = Format(aCurrTmPtr->tm_mon);
+        std::string aMonth = Format(aCurrTmPtr->tm_mon + 1);
         std::string aDay = Format(aCurrTmPtr->tm_mday);
         std::string aHour = Format(aCurrTmPtr->tm_hour);
         std::string aMin = Format(aCurrTmPtr->tm_min);

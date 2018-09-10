@@ -30,7 +30,9 @@ SOURCES += main.cpp\
     Mago4s/Mago4sDilutionRack/mago4sdilutionrack.cpp \
     Mago4s/Mago4sSampleRack/mago4ssamplerack.cpp \
     Mago4s/Mago4sWellRack/mago4swellrack.cpp \
-    Factory/mago4sfactory.cpp
+    Factory/mago4sfactory.cpp \
+    Reader/reader.cpp \
+    Reader/readercontroller.cpp
 
 HEADERS  += mainwindow.h \
     Factory/factory.h \
@@ -55,6 +57,8 @@ HEADERS  += mainwindow.h \
     Logger/logger.h \
     fast_mutex.h \
     tinythread.h \
-    macros.h
+    macros.h \
+    Reader/reader.h \
+    Reader/readercontroller.h
 
 FORMS    += mainwindow.ui
