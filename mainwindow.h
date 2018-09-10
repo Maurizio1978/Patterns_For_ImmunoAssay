@@ -15,6 +15,14 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void slot_started();
+    void slot_finished();
+
+
+//void slot_finished();
+//        QFuture<void> FutureWatcher;
+
 private:
     Ui::MainWindow *ui;
 };
